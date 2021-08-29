@@ -1,0 +1,30 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Udacity Cloud Developer Capstone",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha app/test/*.js",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "udacity",
+    "express",
+    "node",
+    "aws",
+    "docker",
+    "kubernetes"
+  ],
+  "author": "@fr3d3rico",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0"
+  },
+  "devDependencies": {
+    "assert": "^2.0.0",
+    "mocha": "^9.1.1",
+    "supertest": "^6.1.6"
+  }
+}
