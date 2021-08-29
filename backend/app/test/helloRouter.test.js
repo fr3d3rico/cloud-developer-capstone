@@ -10,7 +10,7 @@ describe('Testing Server URL', () => {
             .get('/')
             .expect(200)
             .expect((res) => {
-                assert.equal(res.body, "Hello World!")
+                assert.equal(res.text, "Hello World!")
             })
             .end((err, res) => {
                 if (err) throw err;
@@ -24,7 +24,7 @@ describe('Testing Server URL', () => {
             .get('/Fred')
             .expect(200)
             .expect((res) => {
-                assert.equal(res.body, "Hello Fred!")
+                assert.equal(res.text, "Hello Fred!")
             })
             .end((err, res) => {
                 if (err) throw err;
