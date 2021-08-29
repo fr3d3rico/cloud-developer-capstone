@@ -13,6 +13,7 @@ install:
 before_script:
   - echo "Testing container app"
   - npm i
+  - cd backend
   - npm run test
 
 script:
