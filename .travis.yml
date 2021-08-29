@@ -11,7 +11,9 @@ install:
 
 # Scripts to be run such as tests
 before_script:
-  - echo "No tests"
+  - echo "Testing container app"
+  - npm i
+  - npm run test
 
 script:
   # These build will happen in the Travis worker node
