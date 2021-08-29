@@ -12,7 +12,8 @@ install:
 # Scripts to be run such as tests
 before_script:
   - echo "Testing container app"
-  - npm i
+  - npm install
+  - npm install --dev
   - cd backend
   - npm run test
 
