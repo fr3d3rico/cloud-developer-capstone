@@ -11,12 +11,7 @@ install:
 
 # Scripts to be run such as tests
 before_script:
-  - echo "Testing container app"
-  - npm install
-  - npm install --dev
-  - npm install -g mocha
-  - cd backend
-  - npm run test
+  - echo "No tests"
 
 script:
   # These build will happen in the Travis worker node
