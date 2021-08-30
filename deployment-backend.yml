@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: udacity-web-app
+        image: fr3d3rico/udacity-web-app
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always
+        resources: #This resource is needed to avoid Scaling FailedGetResourceMetric error
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
