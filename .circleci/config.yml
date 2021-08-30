@@ -33,7 +33,9 @@ version: 2.1
 #               npm i
 #               npm run migrations:revert
 #             fi
-  
+orbs:
+  kubernetes: circleci/kubernetes@0.12.0
+
 jobs:
   # build-frontend:
   #   docker:
@@ -131,8 +133,7 @@ jobs:
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
-    orbs:
-      kubernetes: circleci/kubernetes@0.12.0
+    
     steps:
       - checkout
       - kubernetes/install-kubectl
