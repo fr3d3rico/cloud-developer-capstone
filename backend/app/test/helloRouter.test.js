@@ -1,9 +1,9 @@
-const request = require('supertest');
-const assert = require('assert');
-const app = require('../app');
+const request = require('supertest')
+const assert = require('assert')
+const app = require('../app')
 
 describe('Testing Server URL', () => {
-    const agent = request.agent(app);
+    const agent = request.agent(app)
 
     it('Test GET / - Should return status response 200', (done) => {
         request(app)
@@ -15,9 +15,9 @@ describe('Testing Server URL', () => {
             .end((err, res) => {
                 if (err) throw err;
 
-                return done();
-            });
-    });
+                return done()
+            })
+    })
 
     it('Test GET /:name - /Fred should response Hello Fred!', (done) => {
         request(app)
@@ -29,7 +29,7 @@ describe('Testing Server URL', () => {
             .end((err, res) => {
                 if (err) throw err;
 
-                return done();
+                return done()
             })
     })
 
