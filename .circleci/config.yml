@@ -141,6 +141,7 @@ jobs:
       - run:
           name: Get current backend deployment
           command: |
+            aws eks create-cluster --region us-east-1 --name udacity-fred-eks-cluster --kubernetes-version 1.20 --role-arn arn:aws:iam::906381044240:role/eksClusterRoleFred-CloudFormati-eksClusterRoleFred-1QC4VO51JRJSY   --resources-vpc-config subnetIds=subnet-9aa1d0fc,subnet-4aacde15,subnet-7196bd7f,subnet-f3c9b5d2,securityGroupIds=sg-a6f8c6a5
             CURRENT_BACKEND=$(kubectl get deployments -o=name)
             echo "CURRENT_BACKEND=$CURRENT_BACKEND"
             curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$CURRENT_BACKEND" https://api.memstash.io/values/current_backend_${CIRCLE_WORKFLOW_ID:0:7}
