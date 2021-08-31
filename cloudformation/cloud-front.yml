@@ -1,0 +1,34 @@
+Description: >
+  Cloudfront distribution for EKS Backend.
+Parameters:
+  EksUrl:
+    Description: Unique identifier.
+    Type: String
+
+Resources:
+  
+  WebpageCDN:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - CustomOriginConfig:
+              HTTPPort: 3000
+            DomainName: "${EksUrl}"
+        Enabled: True
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          TargetOriginId: webpage
+          ViewerProtocolPolicy: allow-all
+          # "no-cache-for-udapeople" 
+          # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-cachebehavior.html
+          # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-defaultcachebehavior.html
+          # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy
+          # CachePolicyId: "b4f8e523-9b76-41d2-b8c9-87be537b5d89" 
+
+Outputs:
+  EksUrl:
+    Value: !Sub ${EksUrl}
+    Description: URL for website hosted on EKS
+    Export:
+      Name: EksUrl
