@@ -143,11 +143,12 @@ jobs:
           command: |
             aws eks --region us-east-1 update-kubeconfig --name udacity-fred-eks-cluster
             
-            CURRENT_BACKEND=$(kubectl get deployments -o=name)
+            CURRENT_BACKEND=$(kubectl get deployment -o=jsonpath={.items[*].metadata.name})
             echo "CURRENT_BACKEND=$CURRENT_BACKEND"
             curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$CURRENT_BACKEND" https://api.memstash.io/values/CURRENT_BACKEND_${CIRCLE_WORKFLOW_ID:0:7}
             
             NEW_BACKEND=${CIRCLE_WORKFLOW_ID:0:7}
+            echo "NEW_BACKEND=$NEW_BACKEND"
             curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$NEW_BACKEND" https://api.memstash.io/values/NEW_BACKEND_${CIRCLE_WORKFLOW_ID:0:7}
             
       - run:
@@ -156,18 +157,18 @@ jobs:
             echo "apiVersion: apps/v1" > deployment.yml
             echo "kind: Deployment" >> deployment.yml
             echo "metadata:" >> deployment.yml
-            echo "  name: backend-$NEW_BACKEND " >> deployment.yml
+            echo "  name: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> deployment.yml
             echo "  labels:" >> deployment.yml
-            echo "    app: backend-$NEW_BACKEND " >> deployment.yml
+            echo "    app: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> deployment.yml
             echo "spec:" >> deployment.yml
             echo "  replicas: 1" >> deployment.yml
             echo "  selector:" >> deployment.yml
             echo "    matchLabels:" >> deployment.yml
-            echo "      app: backend-$NEW_BACKEND " >> deployment.yml
+            echo "      app: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> deployment.yml
             echo "  template:" >> deployment.yml
             echo "    metadata:" >> deployment.yml
             echo "      labels:" >> deployment.yml
-            echo "        app: backend-$NEW_BACKEND " >> deployment.yml
+            echo "        app: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> deployment.yml
             echo "    spec:" >> deployment.yml
             echo "      containers:" >> deployment.yml
             echo "      - name: udacity-web-app" >> deployment.yml
@@ -191,24 +192,25 @@ jobs:
             echo "kind: Service" >> service.yml
             echo "metadata:" >> service.yml
             echo " labels:" >> service.yml
-            echo "   app: backend-$NEW_BACKEND " >> service.yml
-            echo " name: backend" >> service.yml
+            echo "   app: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> service.yml
+            echo " name: backend-${CIRCLE_WORKFLOW_ID:0:7}" >> service.yml
             echo "spec:" >> service.yml
             echo " ports:" >> service.yml
             echo " - name: '3000'" >> service.yml
             echo "   port: 3000" >> service.yml
             echo "   targetPort: 3000" >> service.yml
             echo " selector:" >> service.yml
-            echo "   app: backend" >> service.yml
+            echo "   app: backend-${CIRCLE_WORKFLOW_ID:0:7}" >> service.yml
             echo " type: LoadBalancer " >> service.yml
       
             cat service.yml
 
-      # - run:
-      #     name: Deploy new backend
-      #     command: |
-      #       kubectl apply -f deployment.yml
-      #       kubectl apply -f service.yml
+      - run:
+          name: Deploy new backend
+          command: |
+            kubectl apply -f deployment.yml
+            kubectl apply -f service.yml
+      
       # - run:
       #     name: Add back-end ip to ansible inventory
       #     command: |
@@ -478,13 +480,17 @@ jobs:
 workflows:
   default:
     jobs:
-      - install-backend
-      - scan-backend:
-          requires: [install-backend]
-      - test-backend:
-          requires: [scan-backend]
-      - deploy-infrastructure:
-          requires: [test-backend]
+      - deploy-infrastructure
+      # - install-backend
+      # - scan-backend:
+      #     requires: [install-backend]
+      # - test-backend:
+      #     requires: [scan-backend]
+      # - deploy-infrastructure:
+      #     requires: [test-backend]
+
+
+
       # - scan-frontend:
       #     requires: [build-frontend]
       # - deploy-infrastructure:
