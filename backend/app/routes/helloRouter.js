@@ -4,7 +4,7 @@ router.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-router.get('/hello/:name', (req, res) => {
+router.get('/:name', (req, res) => {
     res.send(`Hello ${req.params.name}!`)
 })
 
