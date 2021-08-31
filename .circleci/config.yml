@@ -1,20 +1,19 @@
 version: 2.1
 
-# commands:
-#   destroy-environment:
-#     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-#     parameters:
-#       workflow-id:
-#         type: string  
-#         default: ${CIRCLE_WORKFLOW_ID:0:7}
-#     steps:
-#       - run:
-#           name: Destroy environments
-#           when: on_fail
-#           command: |
-#             aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}/ --recursive
-#             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-#             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+commands:
+  destroy-environment:
+    description: Delete NEW_BACKEND deployed.
+    parameters:
+      workflow-id:
+        type: string  
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
+    steps:
+      - run:
+          name: Delete NEW_BACKEND backend
+          when: on_fail
+          command: |
+            NEW_BACKEND=$(curl -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request GET https://api.memstash.io/values/NEW_BACKEND_${CIRCLE_WORKFLOW_ID:0:7})
+            kubectl delete deployment,service backend-$NEW_BACKEND
 #   revert-migrations:
 #     description: Revert the last migration if successfully run in the current workflow.
 #     parameters:
@@ -223,7 +222,7 @@ jobs:
       #     root: ~/
       #     paths:
       #       - project/.circleci/ansible/inventory.txt
-      # - destroy-environment
+      - destroy-environment
 
   wait-1-minute:
     docker:
@@ -234,6 +233,7 @@ jobs:
           name: Wait 1 minute
           command: |
             sleep 1m
+      - destroy-environment
           
   # run-migrations:
   #   docker:
@@ -392,12 +392,15 @@ jobs:
             
             URL="http://${URL}:3000"
 
+            echo "URL=$URL"
+
             if curl -s ${URL} | grep "Hello World!"
             then
               return 0
             else
               return 1
             fi
+      - destroy-environment
 
       # - run:
       #     name: Frontend smoke test.
@@ -442,36 +445,27 @@ jobs:
   #     - destroy-environment
   #     - revert-migrations
 
-  # cleanup:
-  #     docker:
-  #       - image: amazon/aws-cli
-  #     steps:
-  #       # Checkout code from git
-  #       - run:
-  #           name: Get old stack workflow id
-  #           command: |
-  #             STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-  #             --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-  #       - run:
-  #           name: Remove old stacks and files
-  #           command: |
-  #             OldWorkflowID=$(curl -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request GET https://api.memstash.io/values/OldWorkflowID)
-              
-  #             echo OldWorkflowID = "${OldWorkflowID}"
-  #             echo STACKS = "${STACKS}"
-  #             STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-  #             --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-              
-  #             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-  #             then
-  #               aws s3 rb s3://udapeople-${OldWorkflowID} --force
-  #               aws cloudformation delete-stack --stack-name udapeople-backend-${OldWorkflowID}
-  #               aws cloudformation delete-stack --stack-name udapeople-frontend-${OldWorkflowID}
-  #             else
-  #               echo "Destroy not performed"
-  #             fi
-  #       - destroy-environment
-  #       - revert-migrations
+  cleanup:
+      docker:
+        - image: python:3.7-alpine3.11
+      steps:
+        - checkout
+
+        - run:
+            name: Install dependencies
+            command: |
+              apk add --update tar gzip curl nodejs npm
+              pip install awscli
+        
+        - kubernetes/install-kubectl
+
+        - run:
+            name: Delete NEW_BACKEND backend
+            command: |
+              CURRENT_BACKEND=$(curl -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request GET https://api.memstash.io/values/CURRENT_BACKEND_${CIRCLE_WORKFLOW_ID:0:7})
+              kubectl delete deployment,service backend-$CURRENT_BACKEND
+        - destroy-environment
+
 workflows:
   default:
     jobs:
@@ -487,6 +481,8 @@ workflows:
           requires: [deploy-infrastructure]
       - smoke-test:
           requires: [wait-1-minute]
+      - cleanup:
+          requires: [smoke-test]
 
 
 
