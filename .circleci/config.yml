@@ -364,7 +364,7 @@ jobs:
     steps:
       - checkout
       - kubernetes/install-kubectl
-      
+
       - run:
           name: Install dependencies
           command: |
@@ -473,14 +473,18 @@ jobs:
 workflows:
   default:
     jobs:
-      - deploy-infrastructure
-      # - install-backend
-      # - scan-backend:
-      #     requires: [install-backend]
-      # - test-backend:
-      #     requires: [scan-backend]
-      # - deploy-infrastructure:
-      #     requires: [test-backend]
+      # - deploy-infrastructure
+      - install-backend
+      - scan-backend:
+          requires: [install-backend]
+      - test-backend:
+          requires: [scan-backend]
+      - deploy-infrastructure:
+          requires: [test-backend]
+      - wait-1-minute:
+          requires: [deploy-infrastructure]
+      - smoke-test:
+          requires: [wait-1-minute]
 
 
 
