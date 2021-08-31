@@ -360,7 +360,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - kubernetes/install-kubectl
