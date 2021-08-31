@@ -111,7 +111,6 @@ jobs:
           name: Scan Back-end
           command: |
             cd backend
-            npm i
             npm audit fix --audit-level=critical --force
 
   test-backend:
@@ -148,7 +147,7 @@ jobs:
             echo "apiVersion: apps/v1" > deployment.yml
             echo "kind: Deployment" >> deployment.yml
             echo "metadata:" >> deployment.yml
-            echo "  name: backend-$NEW_BACKEND" >> deployment.yml
+            echo "  name: backend-${NEW_BACKEND}" >> deployment.yml
             echo "  labels:" >> deployment.yml
             echo "    app: backend-$NEW_BACKEND" >> deployment.yml
             echo "spec:" >> deployment.yml
@@ -169,11 +168,11 @@ jobs:
             echo "        imagePullPolicy: Always" >> deployment.yml
             echo "        resources: #This resource is needed to avoid Scaling FailedGetResourceMetric error "  >> deployment.yml
             echo "          requests:" >> deployment.yml
-            echo "            memory: '64Mi'" >> deployment.yml
-            echo "            cpu: '250m'" >> deployment.yml
+            echo "            memory: "64Mi"" >> deployment.yml
+            echo "            cpu: "250m"" >> deployment.yml
             echo "          limits:" >> deployment.yml
-            echo "            memory: '1024Mi'" >> deployment.yml
-            echo "            cpu: '500m'" >> deployment.yml
+            echo "            memory: "1024Mi"" >> deployment.yml
+            echo "            cpu: "500m"" >> deployment.yml
       
             cat deployment.yml
       - run:
@@ -183,11 +182,11 @@ jobs:
             echo "kind: Service" >> service.yml
             echo "metadata:" >> service.yml
             echo " labels:" >> service.yml
-            echo "   app: backend-$NEW_BACKEND" >> service.yml
+            echo "   app: backend-${NEW_BACKEND}" >> service.yml
             echo " name: backend" >> service.yml
             echo "spec:" >> service.yml
             echo " ports:" >> service.yml
-            echo " - name: '3000'" >> service.yml
+            echo " - name: "3000"" >> service.yml
             echo "   port: 3000" >> service.yml
             echo "   targetPort: 3000" >> service.yml
             echo " selector:" >> service.yml
