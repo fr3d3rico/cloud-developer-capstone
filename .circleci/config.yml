@@ -224,15 +224,15 @@ jobs:
       #       - project/.circleci/ansible/inventory.txt
       - destroy-environment
 
-  wait-1-minute:
+  wait-some-minutes:
     docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
-          name: Wait 3 minute
+          name: Wait 7 minute
           command: |
-            sleep 3m
+            sleep 7m
       - destroy-environment
           
   # run-migrations:
@@ -475,10 +475,10 @@ workflows:
           requires: [scan-backend]
       - deploy-infrastructure:
           requires: [test-backend]
-      - wait-1-minute:
+      - wait-some-minutes:
           requires: [deploy-infrastructure]
       - smoke-test:
-          requires: [wait-1-minute]
+          requires: [wait-some-minutes]
       - cleanup:
           requires: [smoke-test]
 
