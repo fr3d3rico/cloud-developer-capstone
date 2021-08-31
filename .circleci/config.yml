@@ -363,13 +363,15 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - kubernetes/install-kubectl
 
       - run:
           name: Install dependencies
           command: |
             apk add --update tar gzip curl nodejs npm
             pip install awscli
+      
+      - kubernetes/install-kubectl
+
       # - run:
       #     name: Get backend url
       #     command: |
