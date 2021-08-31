@@ -142,9 +142,9 @@ jobs:
           command: |
             aws eks --region us-east-1 update-kubeconfig --name udacity-fred-eks-cluster
             
-            CURRENT_BACKEND=$(kubectl get deployment -o=jsonpath={.items[*].metadata.name})
-            echo "CURRENT_BACKEND=$CURRENT_BACKEND"
-            curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$CURRENT_BACKEND" https://api.memstash.io/values/CURRENT_BACKEND_${CIRCLE_WORKFLOW_ID:0:7}
+            OLD_BACKEND=$(kubectl get deployment -o=jsonpath={.items[*].metadata.name})
+            echo "OLD_BACKEND=$OLD_BACKEND"
+            curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$OLD_BACKEND" https://api.memstash.io/values/OLD_BACKEND_${CIRCLE_WORKFLOW_ID:0:7}
             
             NEW_BACKEND=${CIRCLE_WORKFLOW_ID:0:7}
             echo "NEW_BACKEND=$NEW_BACKEND"
@@ -230,9 +230,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Wait 1 minute
+          name: Wait 3 minute
           command: |
-            sleep 1m
+            sleep 3m
       - destroy-environment
           
   # run-migrations:
@@ -458,10 +458,10 @@ jobs:
         - kubernetes/install-kubectl
 
         - run:
-            name: Delete NEW_BACKEND backend
+            name: Delete OLD_BACKEND backend
             command: |
-              CURRENT_BACKEND=$(curl -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request GET https://api.memstash.io/values/CURRENT_BACKEND_${CIRCLE_WORKFLOW_ID:0:7})
-              kubectl delete deployment,service backend-$CURRENT_BACKEND
+              OLD_BACKEND=$(curl -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request GET https://api.memstash.io/values/OLD_BACKEND_${CIRCLE_WORKFLOW_ID:0:7})
+              kubectl delete deployment,service backend-$OLD_BACKEND
         - destroy-environment
 
 workflows:
