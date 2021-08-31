@@ -19,9 +19,9 @@ describe('Testing Server URL', () => {
             })
     })
 
-    it('Test GET /:name - /Fred should response Hello Fred!', (done) => {
+    it('Test GET /hello/:name - /hello/Fred should response Hello Fred!', (done) => {
         request(app)
-            .get('/Fred')
+            .get('/hello/Fred')
             .expect(200)
             .expect((res) => {
                 assert.equal(res.text, "Hello Fred!")
