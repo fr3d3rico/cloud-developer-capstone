@@ -22,8 +22,8 @@ spec:
         imagePullPolicy: Always
         resources: #This resource is needed to avoid Scaling FailedGetResourceMetric error
           requests:
-            memory: "64Mi"
-            cpu: "250m"
+            memory: '64Mi'
+            cpu: '250m'
           limits:
-            memory: "1024Mi"
-            cpu: "500m"
+            memory: '1024Mi'
+            cpu: '500m'

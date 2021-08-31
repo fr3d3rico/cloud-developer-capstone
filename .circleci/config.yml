@@ -141,16 +141,66 @@ jobs:
       - run:
           name: Get current backend deployment
           command: |
-            aws eks create-cluster --region us-east-1 --name udacity-fred-eks-cluster --kubernetes-version 1.20 --role-arn arn:aws:iam::906381044240:role/eksClusterRoleFred-CloudFormati-eksClusterRoleFred-1QC4VO51JRJSY   --resources-vpc-config subnetIds=subnet-9aa1d0fc,subnet-4aacde15,subnet-7196bd7f,subnet-f3c9b5d2,securityGroupIds=sg-a6f8c6a5
-            CURRENT_BACKEND=$(kubectl get deployments -o=name)
-            echo "CURRENT_BACKEND=$CURRENT_BACKEND"
-            curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$CURRENT_BACKEND" https://api.memstash.io/values/current_backend_${CIRCLE_WORKFLOW_ID:0:7}
-              
+            NEW_BACKEND=${CIRCLE_WORKFLOW_ID:0:7}
       - run:
-          name: Deploy new backend
+          name: Write deployment.yml
           command: |
-            kubectl apply -f deployment.yml
-            kubectl apply -f service.yml
+            echo "apiVersion: apps/v1" > deployment.yml
+            echo "kind: Deployment" >> deployment.yml
+            echo "metadata:" >> deployment.yml
+            echo "  name: backend-$NEW_BACKEND" >> deployment.yml
+            echo "  labels:" >> deployment.yml
+            echo "    app: backend-$NEW_BACKEND" >> deployment.yml
+            echo "spec:" >> deployment.yml
+            echo "  replicas: 1" >> deployment.yml
+            echo "  selector:" >> deployment.yml
+            echo "    matchLabels:" >> deployment.yml
+            echo "      app: backend-$NEW_BACKEND" >> deployment.yml
+            echo "  template:" >> deployment.yml
+            echo "    metadata:" >> deployment.yml
+            echo "      labels:" >> deployment.yml
+            echo "        app: backend-$NEW_BACKEND" >> deployment.yml
+            echo "    spec:" >> deployment.yml
+            echo "      containers:" >> deployment.yml
+            echo "      - name: udacity-web-app" >> deployment.yml
+            echo "        image: fr3d3rico/udacity-web-app" >> deployment.yml
+            echo "        ports:" >> deployment.yml
+            echo "        - containerPort: 3000" >> deployment.yml
+            echo "        imagePullPolicy: Always" >> deployment.yml
+            echo "        resources: #This resource is needed to avoid Scaling FailedGetResourceMetric error "  >> deployment.yml
+            echo "          requests:" >> deployment.yml
+            echo "            memory: '64Mi'" >> deployment.yml
+            echo "            cpu: '250m'" >> deployment.yml
+            echo "          limits:" >> deployment.yml
+            echo "            memory: '1024Mi'" >> deployment.yml
+            echo "            cpu: '500m'" >> deployment.yml
+      
+            cat deployment.yml
+      - run:
+          name: Write service.yml
+          command: |
+            echo "apiVersion: v1" > service.yml
+            echo "kind: Service" >> service.yml
+            echo "metadata:" >> service.yml
+            echo " labels:" >> service.yml
+            echo "   app: backend-$NEW_BACKEND" >> service.yml
+            echo " name: backend" >> service.yml
+            echo "spec:" >> service.yml
+            echo " ports:" >> service.yml
+            echo " - name: '3000'" >> service.yml
+            echo "   port: 3000" >> service.yml
+            echo "   targetPort: 3000" >> service.yml
+            echo " selector:" >> service.yml
+            echo "   app: backend" >> service.yml
+            echo " type: LoadBalancer " >> service.yml
+      
+            cat service.yml
+
+      # - run:
+      #     name: Deploy new backend
+      #     command: |
+      #       kubectl apply -f deployment.yml
+      #       kubectl apply -f service.yml
       # - run:
       #     name: Add back-end ip to ansible inventory
       #     command: |
