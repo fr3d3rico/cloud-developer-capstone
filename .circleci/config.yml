@@ -464,8 +464,8 @@ jobs:
 
               OLD_BACKEND=$(curl -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request GET https://api.memstash.io/values/OLD_BACKEND_${CIRCLE_WORKFLOW_ID:0:7})
               
-              kubectl delete deployment,service backend-$OLD_BACKEND
-              
+              kubectl delete deployment,service $OLD_BACKEND
+
         - destroy-environment
 
 workflows:
