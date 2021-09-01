@@ -33,8 +33,6 @@ jobs:
              echo ${CIRCLE_WORKFLOW_ID:0:7}
              cd backend
              npm i
-             curl https://raw.githubusercontent.com/fr3d3rico/cloud-developer-capstone/dev/apigateway.yml -o apigateway.yml
-             cat apigateway.yml
       - save_cache:
           paths: [backend/node_modules]
           key: backend-install
