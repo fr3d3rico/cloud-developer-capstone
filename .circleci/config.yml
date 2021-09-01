@@ -82,6 +82,10 @@ jobs:
             OLD_BACKEND=$(kubectl get deployment -o=jsonpath={.items[*].metadata.name})
             echo "OLD_BACKEND=$OLD_BACKEND"
             curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$OLD_BACKEND" https://api.memstash.io/values/OLD_BACKEND_${CIRCLE_WORKFLOW_ID:0:7}
+
+            NEW_BACKEND=${CIRCLE_WORKFLOW_ID:0:7}
+            echo "NEW_BACKEND=$NEW_BACKEND"
+            curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$NEW_BACKEND" https://api.memstash.io/values/NEW_BACKEND_${CIRCLE_WORKFLOW_ID:0:7}
             
       - run:
           name: Write deployment.yml
@@ -108,7 +112,7 @@ jobs:
       - run:
           name: Deploy new backend
           command: |
-            kubectl apply -f deployment.yml
+            kubectl apply -f deployment
             kubectl apply -f service.yml
       
       - destroy-environment
