@@ -195,7 +195,7 @@ jobs:
 
              curl https://raw.githubusercontent.com/fr3d3rico/cloud-developer-capstone/dev/apigateway.yml -o apigateway.yml
 
-             sed -i 's/NEW_BACKEND/$URL/' apigateway.yml
+             sed -i 's/NEW_BACKEND/${URL}/' apigateway.yml
 
              cat apigateway.yml
              echo "URL=$URL"
