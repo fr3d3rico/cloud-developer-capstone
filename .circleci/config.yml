@@ -33,7 +33,7 @@ jobs:
              echo ${CIRCLE_WORKFLOW_ID:0:7}
              cd backend
              npm i
-             cat apigateway.yml
+             curl https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/apigateway.yml -o apigateway.yml
       - save_cache:
           paths: [backend/node_modules]
           key: backend-install
@@ -188,10 +188,10 @@ jobs:
             fi
 
       - run:
-          name: Update apigateway.yml
+          name: Download and Update apigateway.yml
           command: |
              aws eks --region us-east-1 update-kubeconfig --name udacity-fred-eks-cluster
-
+             
              URL=$(kubectl get service --sort-by=.metadata.creationTimestamp -o=jsonpath={.items[2].status.loadBalancer.ingress[0].hostname} | head -1)
 
              sed -i 's/NEW_BACKEND/$URL/' apigateway.yml
@@ -235,9 +235,9 @@ workflows:
           requires: [scan-backend]
       - deploy-infrastructure:
           requires: [test-backend]
-          # filters:
-          #   branches:
-          #     only: [main]
+          filters:
+            branches:
+              only: [main]
       - wait-some-minutes:
           requires: [deploy-infrastructure]
       - smoke-test:
