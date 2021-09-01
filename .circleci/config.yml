@@ -33,7 +33,7 @@ jobs:
              echo ${CIRCLE_WORKFLOW_ID:0:7}
              cd backend
              npm i
-             curl https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/apigateway.yml -o apigateway.yml
+             curl https://raw.githubusercontent.com/fr3d3rico/cloud-developer-capstone/dev/apigateway.yml -o apigateway.yml
              cat apigateway.yml
       - save_cache:
           paths: [backend/node_modules]
@@ -194,6 +194,8 @@ jobs:
              aws eks --region us-east-1 update-kubeconfig --name udacity-fred-eks-cluster
              
              URL=$(kubectl get service --sort-by=.metadata.creationTimestamp -o=jsonpath={.items[2].status.loadBalancer.ingress[0].hostname} | head -1)
+
+             curl https://raw.githubusercontent.com/fr3d3rico/cloud-developer-capstone/dev/apigateway.yml -o apigateway.yml
 
              sed -i 's/NEW_BACKEND/$URL/' apigateway.yml
 
