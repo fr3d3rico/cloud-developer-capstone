@@ -112,7 +112,7 @@ jobs:
       - run:
           name: Deploy new backend
           command: |
-            kubectl apply -f deployment
+            kubectl apply -f deployment.yml
             kubectl apply -f service.yml
       
       - destroy-environment
