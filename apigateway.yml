@@ -1,0 +1,35 @@
+openapi: "3.0.1"
+# https://docs.aws.amazon.com/cli/latest/reference/apigatewayv2/reimport-api.html#examples
+info:
+  title: "EKS Backend"
+  version: "2021-08-31 23:04:30UTC"
+servers:
+- url: "https://2f3e0nx5j3.execute-api.us-east-1.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: ""
+paths:
+  /:
+    get:
+      responses:
+        default:
+          description: "Default response for GET /"
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "1.0"
+        type: "http_proxy"
+        httpMethod: "GET"
+        uri: "http://NEW_BACKEND:3000"
+        connectionType: "INTERNET"
+  /hello/{name}:
+    get:
+      responses:
+        default:
+          description: "Default response for GET /hello/{name}"
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "1.0"
+        type: "http_proxy"
+        httpMethod: "GET"
+        uri: "http://NEW_BACKEND:3000/{name}"
+        connectionType: "INTERNET"
+        timeoutInMillis: 30000
+x-amazon-apigateway-importexport-version: "1.0"
