@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: backend-CIRCLE_WORKFLOW_ID
   labels:
-    app: backend
+    app: backend-CIRCLE_WORKFLOW_ID
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: backend-CIRCLE_WORKFLOW_ID
   template:
     metadata:
       labels:
-        app: backend
+        app: backend-CIRCLE_WORKFLOW_ID
     spec:
       containers:
       - name: udacity-web-app

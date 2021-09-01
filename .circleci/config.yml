@@ -30,7 +30,7 @@ jobs:
       - run:
           name: Back-end install
           command: |
-             echo ${CIRCLE_WORKFLOW_ID:0:7}
+             echo "CIRCLE_WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}"
              cd backend
              npm i
       - save_cache:
@@ -86,55 +86,23 @@ jobs:
       - run:
           name: Write deployment.yml
           command: |
-            echo "apiVersion: apps/v1" > deployment.yml
-            echo "kind: Deployment" >> deployment.yml
-            echo "metadata:" >> deployment.yml
-            echo "  name: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> deployment.yml
-            echo "  labels:" >> deployment.yml
-            echo "    app: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> deployment.yml
-            echo "spec:" >> deployment.yml
-            echo "  replicas: 1" >> deployment.yml
-            echo "  selector:" >> deployment.yml
-            echo "    matchLabels:" >> deployment.yml
-            echo "      app: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> deployment.yml
-            echo "  template:" >> deployment.yml
-            echo "    metadata:" >> deployment.yml
-            echo "      labels:" >> deployment.yml
-            echo "        app: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> deployment.yml
-            echo "    spec:" >> deployment.yml
-            echo "      containers:" >> deployment.yml
-            echo "      - name: udacity-web-app" >> deployment.yml
-            echo "        image: fr3d3rico/udacity-web-app" >> deployment.yml
-            echo "        ports:" >> deployment.yml
-            echo "        - containerPort: 3000" >> deployment.yml
-            echo "        imagePullPolicy: Always" >> deployment.yml
-            echo "        resources: #This resource is needed to avoid Scaling FailedGetResourceMetric error "  >> deployment.yml
-            echo "          requests:" >> deployment.yml
-            echo "            memory: '64Mi'" >> deployment.yml
-            echo "            cpu: '250m'" >> deployment.yml
-            echo "          limits:" >> deployment.yml
-            echo "            memory: '1024Mi'" >> deployment.yml
-            echo "            cpu: '500m'" >> deployment.yml
-      
+            curl https://raw.githubusercontent.com/fr3d3rico/cloud-developer-capstone/main/deployment.yml -o deployment.yml
+
+            SED_REPLACE="s/CIRCLE_WORKFLOW_ID/${CIRCLE_WORKFLOW_ID:0:7}/"
+
+            sed -i $SED_REPLACE deployment.yml
+
             cat deployment.yml
+
       - run:
           name: Write service.yml
           command: |
-            echo "apiVersion: v1" > service.yml
-            echo "kind: Service" >> service.yml
-            echo "metadata:" >> service.yml
-            echo " labels:" >> service.yml
-            echo "   app: backend-${CIRCLE_WORKFLOW_ID:0:7} " >> service.yml
-            echo " name: backend-${CIRCLE_WORKFLOW_ID:0:7}" >> service.yml
-            echo "spec:" >> service.yml
-            echo " ports:" >> service.yml
-            echo " - name: '3000'" >> service.yml
-            echo "   port: 3000" >> service.yml
-            echo "   targetPort: 3000" >> service.yml
-            echo " selector:" >> service.yml
-            echo "   app: backend-${CIRCLE_WORKFLOW_ID:0:7}" >> service.yml
-            echo " type: LoadBalancer " >> service.yml
-      
+            curl https://raw.githubusercontent.com/fr3d3rico/cloud-developer-capstone/main/service.yml -o service.yml
+
+            SED_REPLACE="s/CIRCLE_WORKFLOW_ID/${CIRCLE_WORKFLOW_ID:0:7}/"
+
+            sed -i $SED_REPLACE service.yml
+
             cat service.yml
 
       - run:
@@ -165,7 +133,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip curl nodejs npm
+            apk add --update curl
             pip install awscli
       
       - kubernetes/install-kubectl
@@ -186,6 +154,22 @@ jobs:
               return 1
             fi
 
+      - destroy-environment
+
+  download-update-api-gateway:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl
+            pip install awscli
+      
+      - kubernetes/install-kubectl
+
       - run:
           name: Download and Update apigateway.yml
           command: |
@@ -193,7 +177,7 @@ jobs:
              
              URL=$(kubectl get service --sort-by=.metadata.creationTimestamp -o=jsonpath={.items[2].status.loadBalancer.ingress[0].hostname} | head -1)
 
-             curl https://raw.githubusercontent.com/fr3d3rico/cloud-developer-capstone/dev/apigateway.yml -o apigateway.yml
+             curl https://raw.githubusercontent.com/fr3d3rico/cloud-developer-capstone/main/apigateway.yml -o apigateway.yml
 
              SED_REPLACE="s/NEW_BACKEND/${URL}/"
              sed -i $SED_REPLACE apigateway.yml
@@ -211,7 +195,7 @@ jobs:
         - run:
             name: Install dependencies
             command: |
-              apk add --update tar gzip curl nodejs npm
+              apk add --update curl
               pip install awscli
         
         - kubernetes/install-kubectl
@@ -244,5 +228,7 @@ workflows:
           requires: [deploy-infrastructure]
       - smoke-test:
           requires: [wait-some-minutes]
-      - cleanup:
+      - download-update-api-gateway:
           requires: [smoke-test]
+      - cleanup:
+          requires: [download-update-api-gateway]
