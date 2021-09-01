@@ -197,6 +197,9 @@ jobs:
 
              sed -i 's/NEW_BACKEND/$URL/' apigateway.yml
 
+             cat apigateway.yml
+             echo "URL=$URL"
+
              aws apigatewayv2 reimport-api --body file://apigateway.yml --api-id 2f3e0nx5j3
 
       - destroy-environment
