@@ -198,10 +198,7 @@ jobs:
              SED_REPLACE="s/NEW_BACKEND/${URL}/"
              sed -i $SED_REPLACE apigateway.yml
 
-             cat apigateway.yml
-             echo "URL=$URL"
-
-             aws apigatewayv2 reimport-api --body file://apigateway.yml --api-id 2f3e0nx5j3
+             aws apigatewayv2 reimport-api --body file://apigateway.yml --api-id $AWS_API_GATEWAY_ID
 
       - destroy-environment
 
