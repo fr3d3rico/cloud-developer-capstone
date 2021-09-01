@@ -189,6 +189,16 @@ jobs:
             else
               return 1
             fi
+
+      - run:
+          name: Download and Update apigateway.yml
+          command: |
+             wget https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/apigateway.yml
+             
+             sed -i 's/NEW_BACKEND/$NEW_BACKEND/' apigateway.yml
+
+             aws apigatewayv2 reimport-api --body file://apigateway.yml --api-id 2f3e0nx5j3
+
       - destroy-environment
 
   cleanup:
@@ -226,9 +236,9 @@ workflows:
           requires: [scan-backend]
       - deploy-infrastructure:
           requires: [test-backend]
-          filters:
-            branches:
-              only: [main]
+          # filters:
+          #   branches:
+          #     only: [main]
       - wait-some-minutes:
           requires: [deploy-infrastructure]
       - smoke-test:
