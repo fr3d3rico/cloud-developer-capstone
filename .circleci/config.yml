@@ -33,6 +33,7 @@ jobs:
              echo ${CIRCLE_WORKFLOW_ID:0:7}
              cd backend
              npm i
+             cat apigateway.yml
       - save_cache:
           paths: [backend/node_modules]
           key: backend-install
@@ -82,10 +83,6 @@ jobs:
             OLD_BACKEND=$(kubectl get deployment -o=jsonpath={.items[*].metadata.name})
             echo "OLD_BACKEND=$OLD_BACKEND"
             curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$OLD_BACKEND" https://api.memstash.io/values/OLD_BACKEND_${CIRCLE_WORKFLOW_ID:0:7}
-            
-            NEW_BACKEND=${CIRCLE_WORKFLOW_ID:0:7}
-            echo "NEW_BACKEND=$NEW_BACKEND"
-            curl -H "Content-Type: text/plain" -H "token: b614fca1-86e7-4215-b1af-6fd45ce24223" --request PUT --data "$NEW_BACKEND" https://api.memstash.io/values/NEW_BACKEND_${CIRCLE_WORKFLOW_ID:0:7}
             
       - run:
           name: Write deployment.yml
@@ -191,11 +188,13 @@ jobs:
             fi
 
       - run:
-          name: Download and Update apigateway.yml
+          name: Update apigateway.yml
           command: |
-             wget https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/apigateway.yml
-             
-             sed -i 's/NEW_BACKEND/$NEW_BACKEND/' apigateway.yml
+             aws eks --region us-east-1 update-kubeconfig --name udacity-fred-eks-cluster
+
+             URL=$(kubectl get service --sort-by=.metadata.creationTimestamp -o=jsonpath={.items[2].status.loadBalancer.ingress[0].hostname} | head -1)
+
+             sed -i 's/NEW_BACKEND/$URL/' apigateway.yml
 
              aws apigatewayv2 reimport-api --body file://apigateway.yml --api-id 2f3e0nx5j3
 
