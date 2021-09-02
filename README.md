@@ -9,9 +9,11 @@
 
 ## Travis Pipeline
 
-[![Travis Pipeline](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/service.yml)](https://app.travis-ci.com/fr3d3rico/cloud-developer-capstone)
+[![Travis Pipeline](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/travis-pipeline.jpeg)](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/travis-pipeline.jpeg)
 
 ## Circleci Pipeline
+
+[![Circleci Pipeline](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/circleci-pipeline.jpeg)](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/circleci-pipeline.jpeg)
 
 # Requirements
 
