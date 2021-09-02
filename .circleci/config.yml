@@ -20,7 +20,7 @@ orbs:
 
 jobs:
 
-  install-backend:
+  install-backend-dependencies:
     docker:
       - image: circleci/node:13.8.0
     steps:
@@ -218,9 +218,9 @@ jobs:
 workflows:
   default:
     jobs:
-      - install-backend
+      - install-backend-dependencies
       - scan-backend:
-          requires: [install-backend]
+          requires: [install-backend-dependencies]
       - test-backend:
           requires: [scan-backend]
       - deploy-infrastructure:
