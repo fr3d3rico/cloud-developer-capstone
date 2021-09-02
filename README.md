@@ -1,4 +1,5 @@
-[![Build Status](https://app.travis-ci.com/fr3d3rico/cloud-developer-capstone.svg?branch=main)](https://app.travis-ci.com/fr3d3rico/cloud-developer-capstone) [![CircleCI](https://circleci.com/gh/fr3d3rico/cloud-developer-capstone.svg?style=shield)](https://circleci.com/gh/fr3d3rico/cloud-developer-capstone)
+Travis Status [![Build Status](https://app.travis-ci.com/fr3d3rico/cloud-developer-capstone.svg?branch=main)](https://app.travis-ci.com/fr3d3rico/cloud-developer-capstone)
+Circleci Status [![CircleCI](https://circleci.com/gh/fr3d3rico/cloud-developer-capstone.svg?style=shield)](https://circleci.com/gh/fr3d3rico/cloud-developer-capstone)
 
 # Introduction
 
@@ -41,7 +42,7 @@
 - https://circleci.com/docs/2.0/status-badges/
 
 - https://dillinger.io/
-- lucid chart
+- https://www.lucidchart.com/
 
 - https://app.travis-ci.com/
 - https://app.circleci.com/
