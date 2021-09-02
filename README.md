@@ -13,7 +13,8 @@
 
 ## Circleci Pipeline
 
-[![Circleci Pipeline](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/circleci-pipeline.jpeg)](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/circleci-pipeline.jpeg)
+[![Circleci Pipeline 1](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/circleci-pipeline1.jpeg)](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/circleci-pipeline1.jpeg)
+[![Circleci Pipeline 2](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/circleci-pipeline2.jpeg)](https://github.com/fr3d3rico/cloud-developer-capstone/blob/dev/images/circleci-pipeline2.jpeg)
 
 # Requirements
 
